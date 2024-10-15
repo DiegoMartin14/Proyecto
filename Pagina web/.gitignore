@@ -69,4 +69,4 @@ node_modules/
 .dataconnect
 
 # ignoro las credenciales de mi pagina
-.Pagina web\Public\firebaseConnect.js
+.Public\firebaseConnect.js
