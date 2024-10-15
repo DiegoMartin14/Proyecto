@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "Producción",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "`Número de Tanque`",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "Fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
