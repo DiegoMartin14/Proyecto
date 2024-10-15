@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cervecería Artesanal 7 Colinas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!--IMPORTO FIREBASE-->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+    <!-- Importo Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- Adaptador de fecha para Chart.js -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!--IMPORTO FUNCION DE BOOTSTRAP-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .navbar {
+            background-color: #444;
+            box-shadow: 0 6px 2px -2px rgba(0, 0, 0, 0.9);
+        }
+
+
+        .navbar-brand {
+            color: #ffffff;
+        }
+
+        .nav-link {
+            color: #fff;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #8B4513;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background-color: #A0522D;
+            border-color: #A0522D;
+            transform: scale(1.05);
+        }
+
+        .btn-custom {
+            background-color: #8B4513;
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-custom:hover {
+            background-color: #A0522D;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .card {
+            margin-top: 20px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            background-color: #8B4513;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            background-color: #fff5e1;
+            border-radius: 0 0 10px 10px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .table-responsive {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-toggler {
+            background-color: #A0522D;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath stroke="rgba(255,255,255, 1)" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"%3E%3C/path%3E%3C/svg%3E');
+        }
+
+        .navbar-toggler:hover {
+            background-color: #8B4513;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-nav .nav-link {
+            margin-bottom: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Cervecería Artesanal 7 Colinas</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="monitor"><i
+                                class="fas fa-temperature-high"></i>Monitoreo de Temperaturas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="config"><i class="fas fa-cog"></i> Configuración</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="historial"><i class="fas fa-folder"></i> Historial de
+                            Temperaturas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección de Monitoreo de Temperaturas -->
+    <div id="monitor" class="section active">
+        <h1 class="mt-4 text-center">Monitoreo de Temperaturas</h1>
+
+        <p class="text-center"><strong>Última medición:</strong> <span id="ultimaMedicion">-</span></p>
+
+        <!-- Contenedor para centrar el contenido -->
+        <div class="container">
+            <div class="row">
+                <!-- Tarjetas para cada tanque -->
+                <div class="col-md-4" id="tank-1">
+                    <div class="card">
+                        <div class="card-header">Tanque 1</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-1">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-1">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tanque 2 -->
+                <div class="col-md-4" id="tank-2">
+                    <div class="card">
+                        <div class="card-header">Tanque 2</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-2">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-2">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tanque 3 -->
+                <div class="col-md-4" id="tank-3">
+                    <div class="card">
+                        <div class="card-header">Tanque 3</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-3">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-3">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tanque 4 -->
+                <div class="col-md-4 mt-3" id="tank-4">
+                    <div class="card">
+                        <div class="card-header">Tanque 4</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-4">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-4">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tanque 5 -->
+                <div class="col-md-4 mt-3" id="tank-5">
+                    <div class="card">
+                        <div class="card-header">Tanque 5</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-5">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-5">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tanque 6 -->
+                <div class="col-md-4 mt-3" id="tank-6">
+                    <div class="card">
+                        <div class="card-header">Tanque 6</div>
+                        <div class="card-body">
+                            <p><strong>Temperatura:</strong> <span id="temp-6">-</span> °C</p>
+                            <p><strong>Cerveza:</strong> <span id="nombre-6">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Configuración de Tanques -->
+    <div id="config" class="section">
+        <h1 class="mt-4 text-center">Configuración de Tanques</h1>
+        <!-- Contenedor para centrar el formulario -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <!-- Formulario de Configuración -->
+                    <form id="miFormulario">
+                        <div class="mb-3">
+                            <label for="tank-select" class="form-label">Seleccionar Tanque</label>
+                            <select class="form-select" id="tank-select">
+                                <option value="1">Tanque 1</option>
+                                <option value="2">Tanque 2</option>
+                                <option value="3">Tanque 3</option>
+                                <option value="4">Tanque 4</option>
+                                <option value="5">Tanque 5</option>
+                                <option value="6">Tanque 6</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tipoCerveza" class="form-label">Tipo de Cerveza</label>
+                            <input type="text" class="form-control" id="tipoCerveza"
+                                placeholder="Ingrese la cerveza que va a contener el tanque">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="minTemp" class="form-label">Temperatura Mínima</label>
+                            <input type="number" class="form-control" id="minTemp"
+                                placeholder="Ingrese la temperatura minima para la alarma">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="maxTemp" class="form-label">Temperatura Máxima</label>
+                            <input type="number" class="form-control" id="maxTemp"
+                                placeholder="Ingrese la temperatura maxima para la alarma">
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+
+                            <!-- Botón "Guardar Configuración" -->
+                            <button onclick="guardar()" type="button" class="btn btn-custom">Guardar
+                                Configuración</button>
+
+
+                            <!-- Botón "Mostrar Configuración" -->
+                            <button onclick="mostrarConfiguracion()" type="button" class="btn btn-custom">Mostrar
+                                Configuración</button>
+
+                        </div>
+
+                    </form>
+                    <!-- Sección para mostrar la configuración -->
+                    <div id="configuracionActual" class="mt-4">
+                        <h5>Configuración Actual:</h5>
+                        <p id="configTipoCerveza">Tipo de Cerveza: <span></span></p>
+                        <p id="configMinTemp">Temperatura Mínima: <span></span></p>
+                        <p id="configMaxTemp">Temperatura Máxima: <span></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="historial" class="section">
+        <h1 class="mt-4 text-center">Historial de Temperaturas</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Controles para seleccionar el lapso de tiempo -->
+                    <div class="mb-3">
+                        <label for="timeRange" class="form-label">Seleccionar Lapso de Tiempo</label>
+                        <select class="form-select" id="timeRange">
+                            <option value="1">Hoy</option>
+                            <option value="2">Ayer</option>
+                            <option value="7">Última Semana</option>
+                            <option value="14">Últimas 2 Semanas</option>
+                            <option value="30">Último Mes</option>
+                        </select>
+                    </div>
+                    <!-- Canvas para la gráfica -->
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Cervecería 7 Colinas</p>
+    </footer>
+    
+    <!-- DE ACA PARA ABAJO HAY FUNCIONES -->
+
+    <!-- FUNCIONES SOLO DE LA PAGINA WEB -->
+    <script>
+        // Función para mostrar la sección activa
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Maneja la navegación entre secciones
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                showSection(sectionId);
+            });
+        });
+    </script>
+
+
+    <script>
+        // Escuchar cambios en la selección de tanque
+        document.addEventListener("DOMContentLoaded", function () {
+            const tankSelect = document.getElementById("tank-select");
+            if (tankSelect) {
+                tankSelect.addEventListener("change", function () {
+                    console.log(`Tanque Seleccionado: ${this.value}`);
+                });
+            } else {
+                console.log("Elemento `<select>` no encontrado.");
+            }
+        });
+    </script>
+
+    <!-- Importa los archivos JS -->
+    <script src="firebaseConnect.js" defer></script>
+    <script src="grafico.js" defer></script>
+    <script src="actualizar.js" defer></script>
+    <script src="configurar.js" defer></script>
+    <script src="guardar.js" defer></script>
+
+</body>
+
+</html>
